@@ -87,15 +87,15 @@ Usage
       metrics = PrometheusMetrics(prefix="myservice")
 
       @rpc
-      def say_hello():
+      def say_hello(self):
          return "Hello!"
 
       @http("GET", "/")
-      def index(request):
+      def index(self, request):
          return "OK"
 
       @http("GET", "/metrics")
-      def serve_metrics(request):
+      def serve_metrics(self, request):
          return self.metrics.serve(request)
 
 
