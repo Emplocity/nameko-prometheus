@@ -1,0 +1,69 @@
+# This file exists so you can easily regenerate your project.
+#
+# `cookiepatcher` is a convenient shim around `cookiecutter`
+# for regenerating projects (it will generate a .cookiecutterrc
+# automatically for any template). To use it:
+#
+#    pip install cookiepatcher
+#    cookiepatcher gh:ionelmc/cookiecutter-pylibrary project-path
+#
+# See:
+#    https://pypi.org/project/cookiepatcher
+#
+# Alternatively, you can run:
+#
+#    cookiecutter --overwrite-if-exists --config-file=project-path/.cookiecutterrc gh:ionelmc/cookiecutter-pylibrary
+
+default_context:
+
+    _extensions:               ['jinja2_time.TimeExtension']
+    _template:                 'gh:ionelmc/cookiecutter-pylibrary'
+    allow_tests_inside_package: 'no'
+    appveyor:                  'no'
+    c_extension_function:      'longest'
+    c_extension_module:        '_nameko_prometheus'
+    c_extension_optional:      'no'
+    c_extension_support:       'no'
+    c_extension_test_pypi:     'no'
+    c_extension_test_pypi_username: 'emplocity'
+    codacy:                    'no'
+    codacy_projectid:          '[Get ID from https://app.codacy.com/app/emplocity/nameko-prometheus/settings]'
+    codeclimate:               'no'
+    codecov:                   'no'
+    command_line_interface:    'no'
+    command_line_interface_bin_name: 'nameko-prometheus'
+    coveralls:                 'no'
+    coveralls_token:           '[Required for Appveyor, take it from https://coveralls.io/github/emplocity/nameko-prometheus]'
+    distribution_name:         'nameko-prometheus'
+    email:                     'zbigniew.siciarz@emplocity.pl'
+    full_name:                 'Emplocity'
+    landscape:                 'no'
+    license:                   'Apache Software License 2.0'
+    linter:                    'flake8'
+    package_name:              'nameko_prometheus'
+    project_name:              'nameko-prometheus'
+    project_short_description: 'Prometheus metrics collector and exporter for nameko microservice framework'
+    pypi_badge:                'yes'
+    pypi_disable_upload:       'no'
+    release_date:              'today'
+    repo_hosting:              'github.com'
+    repo_hosting_domain:       'github.com'
+    repo_name:                 'nameko-prometheus'
+    repo_username:             'emplocity'
+    requiresio:                'no'
+    scrutinizer:               'no'
+    setup_py_uses_setuptools_scm: 'no'
+    setup_py_uses_test_runner: 'yes'
+    sphinx_docs:               'yes'
+    sphinx_docs_hosting:       'https://nameko-prometheus.readthedocs.io/'
+    sphinx_doctest:            'no'
+    sphinx_theme:              'sphinx-rtd-theme'
+    test_matrix_configurator:  'yes'
+    test_matrix_separate_coverage: 'yes'
+    test_runner:               'pytest'
+    travis:                    'yes'
+    travis_osx:                'no'
+    version:                   '0.1'
+    website:                   'https://emplocity.com/'
+    year_from:                 '2019'
+    year_to:                   '2019'
