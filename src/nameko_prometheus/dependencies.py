@@ -38,7 +38,7 @@ class MetricsServer:
 
 class PrometheusMetrics(DependencyProvider):
     """
-
+    Dependency provider which measures RPC and HTTP endpoint latency.
     """
 
     def __init__(self, prefix: str = "nameko"):
