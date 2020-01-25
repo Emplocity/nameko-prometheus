@@ -96,7 +96,7 @@ Usage
 
       @http("GET", "/metrics")
       def serve_metrics(self, request):
-         return self.metrics.serve(request)
+         return self.metrics.expose_metrics(request)
 
 
 Documentation
