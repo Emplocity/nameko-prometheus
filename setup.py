@@ -13,7 +13,7 @@ with open("README.rst", "r") as f:
 
 setup(
     name="nameko-prometheus",
-    version="0.1",
+    version="0.1.1",
     license="Apache-2.0",
     description="Prometheus metrics collector and exporter for nameko microservice framework",
     long_description=long_description,
