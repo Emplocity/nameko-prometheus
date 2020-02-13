@@ -88,7 +88,11 @@ class PrometheusMetrics(DependencyProvider):
             if isinstance(entrypoint, HttpRequestHandler):
                 http_method = entrypoint.method
                 url = entrypoint.url
-                status_code = entrypoint.response_from_result(result).status_code
+                if exc_info:
+                    _, exc, _ = exc_info
+                    status_code = entrypoint.response_from_exception(exc).status_code
+                else:
+                    status_code = entrypoint.response_from_result(result).status_code
                 logger.debug(f"Tracing HTTP request: {http_method} {url} {status_code}")
                 self.http_request_total_counter.labels(
                     http_method=http_method, endpoint=url, status_code=status_code
