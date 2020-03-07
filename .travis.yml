@@ -1,6 +1,8 @@
+sudo: false
 language: python
-dist: xenial
 cache: false
+services:
+  - docker
 env:
   global:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
@@ -23,10 +25,10 @@ before_install:
   - python --version
   - uname -a
   - lsb_release -a || true
+  - docker run -d --rm -p 15672:15672 -p 5672:5672 --name rabbitmq rabbitmq:3-management
 install:
   - python -mpip install --progress-bar=off tox -rci/requirements.txt
   - virtualenv --version
-  - easy_install --version
   - pip --version
   - tox --version
 script:
