@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 
 from glob import glob
-from os.path import basename
-from os.path import splitext
+from os.path import basename, splitext
 
 from setuptools import find_packages, setup
-
 
 with open("README.rst", "r") as f:
     long_description = f.read()

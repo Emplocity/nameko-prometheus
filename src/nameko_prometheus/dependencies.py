@@ -12,7 +12,6 @@ from prometheus_client.exposition import choose_encoder
 from prometheus_client.registry import REGISTRY
 from werkzeug.wrappers import Request, Response
 
-
 logger = logging.getLogger(__name__)
 
 
