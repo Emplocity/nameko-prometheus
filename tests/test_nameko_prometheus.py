@@ -40,3 +40,8 @@ def test_expose_default_metrics(config, container_factory, web_session):
         f'{MyService.name}_rpc_requests_total{{method_name="update_counter"}} 2.0'
         in response.text
     )
+
+
+# TODO:
+# - check custom-defined metrics (histograms etc)
+# - check HTTP status codes (include 500 when endpoint raises exception)
