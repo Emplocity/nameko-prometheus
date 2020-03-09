@@ -2,7 +2,7 @@ import pytest
 from nameko.rpc import rpc
 from nameko.testing.services import entrypoint_hook
 from nameko.web.handlers import http
-from prometheus_client import REGISTRY
+from prometheus_client import REGISTRY, Counter
 
 from nameko_prometheus import PrometheusMetrics
 
@@ -25,13 +25,16 @@ def reset_prometheus_registry():
         REGISTRY.unregister(collector)
 
 
+my_counter = Counter("my_counter", "My counter")
+
+
 class MyService:
     name = "my_service"
     metrics = PrometheusMetrics(prefix="my_service")
 
     @rpc
     def update_counter(self):
-        pass
+        my_counter.inc()
 
     @http("GET", "/metrics")
     def expose_metrics(self, request):
@@ -57,6 +60,16 @@ def test_expose_default_metrics(config, container_factory, web_session):
     )
 
 
+def test_expose_custom_metrics(config, container_factory, web_session):
+    container = container_factory(MyService, config)
+    container.start()
+    with entrypoint_hook(container, "update_counter") as update_counter:
+        update_counter()
+        update_counter()
+    response = web_session.get("/metrics")
+    assert f"my_counter_total" in response.text
+
+
 def test_http_metrics_collected_on_exception(config, container_factory, web_session):
     container = container_factory(MyService, config)
     container.start()
@@ -66,7 +79,3 @@ def test_http_metrics_collected_on_exception(config, container_factory, web_sess
         f'{MyService.name}_http_requests_total{{endpoint="/error",http_method="GET",status_code="500"}} 1.0'
         in response.text
     )
-
-
-# TODO:
-# - check custom-defined metrics (histograms etc)
