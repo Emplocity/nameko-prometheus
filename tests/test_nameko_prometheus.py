@@ -17,8 +17,11 @@ def config(rabbit_config, web_config):
 
 @pytest.fixture(autouse=True)
 def reset_prometheus_registry():
-    collectors = list(REGISTRY._collector_to_names.keys())
-    for collector in collectors:
+    collectors_to_unregister = []
+    for collector, names in REGISTRY._collector_to_names.items():
+        if any(name.startswith("my_service") for name in names):
+            collectors_to_unregister.append(collector)
+    for collector in collectors_to_unregister:
         REGISTRY.unregister(collector)
 
 
