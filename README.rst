@@ -84,15 +84,11 @@ Usage
 
 
    class MyService:
-      metrics = PrometheusMetrics(prefix="myservice")
+      metrics = PrometheusMetrics()
 
       @rpc
       def say_hello(self):
          return "Hello!"
-
-      @http("GET", "/")
-      def index(self, request):
-         return "OK"
 
       @http("GET", "/metrics")
       def serve_metrics(self, request):
@@ -101,7 +97,6 @@ Usage
 
 Documentation
 =============
-
 
 https://nameko-prometheus.readthedocs.io/
 
