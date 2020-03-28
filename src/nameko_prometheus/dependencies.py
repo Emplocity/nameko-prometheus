@@ -16,6 +16,13 @@ logger = logging.getLogger(__name__)
 
 
 class MetricsServer:
+    """
+    Serves metrics in a format readable by Prometheus scraper.
+
+    Call :meth:`~MetricsServer.expose_metrics()` from a service method decorated with `@http`
+    entrypoint to present metrics to Prometheus over HTTP.
+    """
+
     def expose_metrics(self, request: Request) -> Response:
         if "name" not in request.args:
             logger.debug(
@@ -38,12 +45,25 @@ class MetricsServer:
 class PrometheusMetrics(DependencyProvider):
     """
     Dependency provider which measures RPC and HTTP endpoint latency.
+
+    On service start, a few default metrics are declared. These are:
+
+    - ``<prefix>_http_requests_total``
+    - ``<prefix>_http_request_latency_seconds``
+    - ``<prefix>_rpc_requests_total``
+    - ``<prefix>_rpc_request_latency_seconds``
+
+    where ``prefix`` is either derived from ``name`` attribute of the service
+    class, or :ref:`configured manually <configuration>`.
     """
 
     def __init__(self):
         self.worker_starts: MutableMapping[WorkerContext, float] = WeakKeyDictionary()
 
     def setup(self) -> None:
+        """
+        Configures the dependency provider and declares default metrics.
+        """
         # read config from container, use service name as default prefix
         service_name = self.container.service_name
         config = self.container.config.get("PROMETHEUS", {})
@@ -72,18 +92,29 @@ class PrometheusMetrics(DependencyProvider):
         )
 
     def get_dependency(self, worker_ctx: WorkerContext) -> MetricsServer:
+        """
+        Returns an instance of
+        :class:`~nameko_prometheus.dependencies.MetricsServer` to be injected
+        into the worker.
+        """
         return MetricsServer()
 
     def worker_setup(self, worker_ctx: WorkerContext) -> None:
-        logger.debug("Worker setup")
+        """
+        Called before service worker starts.
+        """
         self.worker_starts[worker_ctx] = time.perf_counter()
 
     def worker_result(
         self, worker_ctx: WorkerContext, result=None, exc_info=None
     ) -> None:
         """
+        Called after service worker completes.
+
+        At this point the default metrics such as worker latency are observed,
+        regardless of whether the worker finished successfully or raised an
+        exception.
         """
-        logger.debug(f"Worker result: {result} (exc_info={exc_info})")
         try:
             start = self.worker_starts.pop(worker_ctx)
             entrypoint = worker_ctx.entrypoint

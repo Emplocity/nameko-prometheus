@@ -5,5 +5,5 @@ nameko_prometheus
 
     from nameko_prometheus import *
 
-.. automodule:: nameko_prometheus
+.. automodule:: nameko_prometheus.dependencies
     :members:
