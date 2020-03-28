@@ -30,7 +30,7 @@ my_counter = Counter("my_counter", "My counter")
 
 class MyService:
     name = "my_service"
-    metrics = PrometheusMetrics(prefix="my_service")
+    metrics = PrometheusMetrics()
 
     @rpc
     def update_counter(self):
@@ -79,3 +79,15 @@ def test_http_metrics_collected_on_exception(config, container_factory, web_sess
         f'{MyService.name}_http_requests_total{{endpoint="/error",http_method="GET",status_code="500"}} 1.0'
         in response.text
     )
+
+
+def test_override_default_metric_prefix(config, container_factory, web_session):
+    prefix = "my_prefix"
+    config.update({"PROMETHEUS": {MyService.name: {"prefix": prefix}}})
+    print(config)
+    container = container_factory(MyService, config)
+    container.start()
+    with entrypoint_hook(container, "update_counter") as update_counter:
+        update_counter()
+    response = web_session.get("/metrics")
+    assert f"TYPE {prefix}_rpc_requests_total counter" in response.text

@@ -40,29 +40,33 @@ class PrometheusMetrics(DependencyProvider):
     Dependency provider which measures RPC and HTTP endpoint latency.
     """
 
-    def __init__(self, prefix: str = "nameko"):
-        self.prefix = prefix
+    def __init__(self):
         self.worker_starts: MutableMapping[WorkerContext, float] = WeakKeyDictionary()
 
     def setup(self) -> None:
-        logger.debug(f"{self.__class__.__name__} setup")
+        # read config from container, use service name as default prefix
+        service_name = self.container.service_name
+        config = self.container.config.get("PROMETHEUS", {})
+        service_config = config.get(service_name, {})
+        prefix = service_config.get("prefix", service_name)
+        # initialize default metrics exposed for every service
         self.http_request_total_counter = Counter(
-            f"{self.prefix}_http_requests_total",
+            f"{prefix}_http_requests_total",
             "Total number of HTTP requests",
             ["http_method", "endpoint", "status_code"],
         )
         self.http_request_latency_histogram = Histogram(
-            f"{self.prefix}_http_request_latency_seconds",
+            f"{prefix}_http_request_latency_seconds",
             "HTTP request duration in seconds",
             ["http_method", "endpoint", "status_code"],
         )
         self.rpc_request_total_counter = Counter(
-            f"{self.prefix}_rpc_requests_total",
+            f"{prefix}_rpc_requests_total",
             "Total number of RPC requests",
             ["method_name"],
         )
         self.rpc_request_latency_histogram = Histogram(
-            f"{self.prefix}_rpc_request_latency_seconds",
+            f"{prefix}_rpc_request_latency_seconds",
             "RPC request duration in seconds",
             ["method_name"],
         )
