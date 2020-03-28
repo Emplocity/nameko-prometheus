@@ -2,6 +2,7 @@
 Usage
 =====
 
-To use nameko-prometheus in a project::
 
-	import nameko_prometheus
+.. include:: ../README.rst
+   :start-after: include-section-usage-start
+   :end-before: include-section-usage-end

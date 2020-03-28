@@ -1,3 +1,8 @@
+
+.. include:: ../README.rst
+   :start-after: include-section-overview-start
+   :end-before: include-section-overview-end
+
 ========
 Contents
 ========
@@ -5,8 +10,6 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   readme
-   installation
    configuration
    usage
    reference/index

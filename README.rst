@@ -1,6 +1,8 @@
-========
-Overview
-========
+.. include-section-overview-start
+
+=================
+nameko-prometheus
+=================
 
 .. start-badges
 
@@ -60,7 +62,6 @@ Features
  - automatic collection of request latency metrics for RPC and HTTP endpoints
  - HTTP endpoint exposing metrics to be scraped by Prometheus
 
-
 Installation
 ============
 
@@ -72,9 +73,12 @@ You can also install the in-development version with::
 
     pip install https://github.com/emplocity/nameko-prometheus/archive/master.zip
 
+.. include-section-overview-end
 
 Usage
 =====
+
+.. include-section-usage-start
 
 .. code-block:: python
 
@@ -94,6 +98,7 @@ Usage
       def serve_metrics(self, request):
          return self.metrics.expose_metrics(request)
 
+.. include-section-usage-end
 
 Documentation
 =============
