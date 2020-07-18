@@ -1,6 +1,9 @@
+import logging
+
 import pytest
+from nameko.events import event_handler, EventDispatcher
 from nameko.rpc import rpc
-from nameko.testing.services import entrypoint_hook
+from nameko.testing.services import entrypoint_hook, entrypoint_waiter
 from nameko.web.handlers import http
 from prometheus_client import REGISTRY, Counter
 
@@ -31,6 +34,7 @@ my_counter = Counter("my_counter", "My counter")
 class MyService:
     name = "my_service"
     metrics = PrometheusMetrics()
+    dispatcher = EventDispatcher()
 
     @rpc
     def update_counter(self):
@@ -43,6 +47,14 @@ class MyService:
     @http("GET", "/error")
     def raise_error(self, request):
         raise ValueError("poof")
+
+    @rpc
+    def emit_event(self):
+        self.dispatcher("my_event", {"foo": "bar"})
+
+    @event_handler("my_service", "my_event")
+    def handle_event(self, payload):
+        return f"handled: {payload}"
 
 
 def test_expose_default_metrics(config, container_factory, web_session):
@@ -68,6 +80,22 @@ def test_expose_custom_metrics(config, container_factory, web_session):
         update_counter()
     response = web_session.get("/metrics")
     assert "my_counter_total" in response.text
+
+
+def test_expose_event_handler_metrics(config, container_factory, web_session, caplog):
+    caplog.set_level(logging.DEBUG, logger="nameko_prometheus")
+    container = container_factory(MyService, config)
+    container.start()
+    with entrypoint_waiter(container, "handle_event"):
+        with entrypoint_hook(container, "emit_event") as emit_event:
+            emit_event()
+    response = web_session.get("/metrics")
+    assert f"TYPE {MyService.name}_events_total counter" in response.text
+    assert f"TYPE {MyService.name}_events_latency_seconds histogram" in response.text
+    assert (
+        f'{MyService.name}_events_total{{event_type="my_event",source_service="my_service"}} 1.0'
+        in response.text
+    )
 
 
 def test_http_metrics_collected_on_exception(config, container_factory, web_session):

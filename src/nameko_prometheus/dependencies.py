@@ -5,6 +5,7 @@ from weakref import WeakKeyDictionary
 
 from nameko.containers import WorkerContext
 from nameko.extensions import DependencyProvider
+from nameko.events import EventHandler
 from nameko.rpc import Rpc
 from nameko.web.handlers import HttpRequestHandler
 from prometheus_client import Counter, Histogram
@@ -90,6 +91,16 @@ class PrometheusMetrics(DependencyProvider):
             "RPC request duration in seconds",
             ["method_name"],
         )
+        self.events_total_counter = Counter(
+            f"{prefix}_events_total",
+            "Total number of handled events",
+            ["source_service", "event_type"],
+        )
+        self.events_latency_histogram = Histogram(
+            f"{prefix}_events_latency_seconds",
+            "Event handler duration in seconds",
+            ["source_service", "event_type"],
+        )
 
     def get_dependency(self, worker_ctx: WorkerContext) -> MetricsServer:
         """
@@ -141,6 +152,16 @@ class PrometheusMetrics(DependencyProvider):
                 self.rpc_request_total_counter.labels(method_name=method_name).inc()
                 self.rpc_request_latency_histogram.labels(
                     method_name=method_name
+                ).observe(duration)
+            elif isinstance(entrypoint, EventHandler):
+                source_service = entrypoint.source_service
+                event_type = entrypoint.event_type
+                logger.debug(f"Tracing event handler: {source_service} {event_type}")
+                self.events_total_counter.labels(
+                    source_service=source_service, event_type=event_type
+                ).inc()
+                self.events_latency_histogram.labels(
+                    source_service=source_service, event_type=event_type
                 ).observe(duration)
             else:
                 logger.warning(
