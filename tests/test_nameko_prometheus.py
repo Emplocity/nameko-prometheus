@@ -84,7 +84,6 @@ def test_http_metrics_collected_on_exception(config, container_factory, web_sess
 def test_override_default_metric_prefix(config, container_factory, web_session):
     prefix = "my_prefix"
     config.update({"PROMETHEUS": {MyService.name: {"prefix": prefix}}})
-    print(config)
     container = container_factory(MyService, config)
     container.start()
     with entrypoint_hook(container, "update_counter") as update_counter:
