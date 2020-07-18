@@ -53,6 +53,8 @@ class PrometheusMetrics(DependencyProvider):
     - ``<prefix>_http_request_latency_seconds``
     - ``<prefix>_rpc_requests_total``
     - ``<prefix>_rpc_request_latency_seconds``
+    - ``<prefix>_events_total``
+    - ``<prefix>_events_latency_seconds``
 
     where ``prefix`` is either derived from ``name`` attribute of the service
     class, or :ref:`configured manually <configuration>`.
