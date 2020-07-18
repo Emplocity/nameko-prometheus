@@ -67,7 +67,7 @@ def test_expose_custom_metrics(config, container_factory, web_session):
         update_counter()
         update_counter()
     response = web_session.get("/metrics")
-    assert f"my_counter_total" in response.text
+    assert "my_counter_total" in response.text
 
 
 def test_http_metrics_collected_on_exception(config, container_factory, web_session):

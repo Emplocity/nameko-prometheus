@@ -37,7 +37,7 @@ class MetricsServer:
             output = encoder(registry)
             return Response(output, status=200, content_type=content_type)
         except Exception:
-            message = f"Failed to generate metrics"
+            message = "Failed to generate metrics"
             logger.exception(message)
             return Response(message, status=500)
 
