@@ -118,6 +118,7 @@ class PrometheusMetrics(DependencyProvider):
         try:
             start = self.worker_starts.pop(worker_ctx)
             entrypoint = worker_ctx.entrypoint
+            logger.debug(f"Got result from entrypoint: {entrypoint}")
             duration = time.perf_counter() - start
             if isinstance(entrypoint, HttpRequestHandler):
                 http_method = entrypoint.method
@@ -141,5 +142,9 @@ class PrometheusMetrics(DependencyProvider):
                 self.rpc_request_latency_histogram.labels(
                     method_name=method_name
                 ).observe(duration)
+            else:
+                logger.warning(
+                    f"Entrypoint {entrypoint} is not traceable by nameko_prometheus"
+                )
         except KeyError:
             logger.info("No worker_ctx in request start dictionary")
