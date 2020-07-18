@@ -1,5 +1,3 @@
-import logging
-
 import pytest
 from nameko.events import EventDispatcher, event_handler
 from nameko.rpc import rpc
@@ -82,8 +80,7 @@ def test_expose_custom_metrics(config, container_factory, web_session):
     assert "my_counter_total" in response.text
 
 
-def test_expose_event_handler_metrics(config, container_factory, web_session, caplog):
-    caplog.set_level(logging.DEBUG, logger="nameko_prometheus")
+def test_expose_event_handler_metrics(config, container_factory, web_session):
     container = container_factory(MyService, config)
     container.start()
     with entrypoint_waiter(container, "handle_event"):
