@@ -1,7 +1,7 @@
 import logging
 
 import pytest
-from nameko.events import event_handler, EventDispatcher
+from nameko.events import EventDispatcher, event_handler
 from nameko.rpc import rpc
 from nameko.testing.services import entrypoint_hook, entrypoint_waiter
 from nameko.web.handlers import http

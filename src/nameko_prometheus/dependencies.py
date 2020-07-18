@@ -4,8 +4,8 @@ from typing import MutableMapping
 from weakref import WeakKeyDictionary
 
 from nameko.containers import WorkerContext
-from nameko.extensions import DependencyProvider
 from nameko.events import EventHandler
+from nameko.extensions import DependencyProvider
 from nameko.rpc import Rpc
 from nameko.web.handlers import HttpRequestHandler
 from prometheus_client import Counter, Histogram
