@@ -15,3 +15,5 @@ services:
       - type: bind
         source: ./prometheus.yml
         target: /etc/prometheus/prometheus.yml
+  my_service:
+    build: .
