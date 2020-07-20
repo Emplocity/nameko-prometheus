@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3
+    ports:
+      - target: 5672
+        published: 5672
+  prometheus:
+    image: prom/prometheus:v2.19.2
+    ports:
+      - target: 9090
+        published: 9090
+    volumes:
+      - type: bind
+        source: ./prometheus.yml
+        target: /etc/prometheus/prometheus.yml
