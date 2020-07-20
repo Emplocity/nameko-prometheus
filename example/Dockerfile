@@ -8,4 +8,4 @@ COPY . /var/run/my_service
 WORKDIR /var/run/my_service
 
 CMD ["wait-for-it", "--host=rabbitmq", "--port=5672", "--timeout=10", "--strict", "--", \
-    "nameko", "run", "service:MyService", "--broker", "pyamqp://guest@rabbitmq"]
+    "nameko", "run", "service:MyService", "--config", "config.yml"]
