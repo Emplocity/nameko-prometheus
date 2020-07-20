@@ -59,7 +59,8 @@ which allows application metrics collection with Prometheus_.
 Features
 ========
 
- - automatic collection of request latency metrics for RPC and HTTP endpoints
+ - automatic collection of request latency metrics for RPC methods, event
+   handlers and HTTP requests
  - HTTP endpoint exposing metrics to be scraped by Prometheus
 
 Installation
