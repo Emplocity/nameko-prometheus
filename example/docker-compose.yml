@@ -17,3 +17,5 @@ services:
         target: /etc/prometheus/prometheus.yml
   my_service:
     build: .
+    depends_on:
+      - rabbitmq

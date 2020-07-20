@@ -1,7 +1,11 @@
-FROM python:3.8.4-alpine
+FROM python:3.8.4-slim
 
-RUN apk add build-base && \
-    pip install nameko
-COPY service.py /service.py
+RUN apt-get update && apt-get install -y build-essential wait-for-it && \
+    pip install nameko nameko-prometheus
 
-CMD ["nameko", "run", "service:MyService", "--broker", "pyamqp://guest@rabbitmq:5672"]
+COPY . /var/run/my_service
+
+WORKDIR /var/run/my_service
+
+CMD ["wait-for-it", "--host=rabbitmq", "--port=5672", "--timeout=10", "--strict", "--", \
+    "nameko", "run", "service:MyService", "--broker", "pyamqp://guest@rabbitmq"]
