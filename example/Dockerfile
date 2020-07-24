@@ -1,7 +1,7 @@
 FROM python:3.8.4-slim
 
 RUN apt-get update && apt-get install -y build-essential wait-for-it && \
-    pip install nameko nameko-prometheus 'dnspython<2'
+    pip install nameko 'dnspython<2' https://github.com/Emplocity/nameko-prometheus/archive/master.zip#egg=nameko_prometheus
 
 COPY . /var/run/my_service
 
