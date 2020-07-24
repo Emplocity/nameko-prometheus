@@ -19,3 +19,6 @@ services:
     build: .
     depends_on:
       - rabbitmq
+    ports:
+      - target: 8000
+        published: 8000
