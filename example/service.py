@@ -4,12 +4,19 @@ import time
 from nameko.events import EventDispatcher, event_handler
 from nameko.rpc import rpc, RpcProxy
 from nameko.testing.services import once
+from nameko.web.handlers import http
+from nameko_prometheus import PrometheusMetrics
 
 
 class MyService:
     name = "my_service"
     my_service = RpcProxy(name)
     dispatcher = EventDispatcher()
+    metrics = PrometheusMetrics()
+
+    @http("GET", "/metrics")
+    def expose_metrics(self, request):
+        return self.metrics.expose_metrics(request)
 
     @rpc
     def say_hello(self):
