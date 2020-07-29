@@ -15,7 +15,7 @@ Run the example with::
    docker-compose up --build
 
 Once all containers start, browse the Prometheus web interface at
-localhost:9090. Try some of these example queries:
+http://localhost:9090. Try some of these example queries:
 
  - ``rate(my_service_rpc_requests_total[1m])``
  - ``histogram_quantile(0.95, sum(rate(my_service_rpc_request_latency_seconds_bucket[1m])) by (le, method_name))``
