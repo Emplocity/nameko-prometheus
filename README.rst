@@ -61,6 +61,7 @@ Features
 
  - automatic collection of request latency metrics for RPC methods, event
    handlers and HTTP requests
+ - custom application metrics are also exposed automatically
  - HTTP endpoint exposing metrics to be scraped by Prometheus
 
 Installation

@@ -1,7 +1,9 @@
-Reference
-=========
+API reference
+=============
 
-.. toctree::
-    :glob:
+.. testsetup::
 
-    nameko_prometheus*
+    from nameko_prometheus import *
+
+.. automodule:: nameko_prometheus.dependencies
+    :members:
