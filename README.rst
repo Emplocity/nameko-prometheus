@@ -99,6 +99,9 @@ Usage
       def serve_metrics(self, request):
          return self.metrics.expose_metrics(request)
 
+
+See also the full stack example in ``example/`` directory in this repo.
+
 .. include-section-usage-end
 
 Documentation
