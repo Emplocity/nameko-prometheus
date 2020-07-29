@@ -84,10 +84,9 @@ Usage
 
 Define your application metrics using types from prometheus_client_, such as
 ``Counter``, ``Gauge``, ``Histogram``, etc. Add a
-:class:`~nameko_prometheus.dependencies.PrometheusMetrics` dependency provider
-to your service class. Then add a HTTP entrypoint (usually routed under
-``/metrics`` URL) that forwards the request to ``expose_metrics()`` method
-of the provider. That's it!
+``PrometheusMetrics`` dependency provider to your service class. Then add a
+HTTP entrypoint (usually routed under ``/metrics`` URL) that forwards the
+request to ``expose_metrics()`` method of the provider. That's it!
 
 .. _prometheus_client: https://github.com/prometheus/client_python
 
@@ -117,7 +116,7 @@ of the provider. That's it!
          return self.metrics.expose_metrics(request)
 
 There are a few automatically defined metrics as well. See the documentation of
-:class:`~nameko_prometheus.dependencies.PrometheusMetrics` for more.
+``PrometheusMetrics`` for more.
 
 See also the full stack example in ``example/`` directory in this repo.
 
