@@ -2,10 +2,12 @@ version: "3.7"
 
 services:
   rabbitmq:
-    image: rabbitmq:3
+    image: rabbitmq:3-management
     ports:
       - target: 5672
         published: 5672
+      - target: 15672
+        published: 15672
   prometheus:
     image: prom/prometheus:v2.19.2
     ports:
