@@ -2,6 +2,13 @@
 Changelog
 =========
 
+1.0.0 (2020-07-29)
+------------------
+
+* Added default performance metrics for event handlers.
+* Added a full-stack example in the repository.
+* Expanded the usage documentation.
+
 0.2.0 (2020-03-28)
 ------------------
 
