@@ -20,11 +20,16 @@ class MetricsServer:
     """
     Serves metrics in a format readable by Prometheus scraper.
 
-    Call :meth:`~MetricsServer.expose_metrics()` from a service method decorated with `@http`
+    Call :meth:`~expose_metrics()` from a service method decorated with `@http`_
     entrypoint to present metrics to Prometheus over HTTP.
+
+    .. _@http: https://nameko.readthedocs.io/en/stable/built_in_extensions.html#http
     """
 
     def expose_metrics(self, request: Request) -> Response:
+        """
+        Returns metrics as a HTTP response in Prometheus text format.
+        """
         if "name" not in request.args:
             logger.debug(
                 "Registry name(s) not found in query string, using global registry"
@@ -45,7 +50,8 @@ class MetricsServer:
 
 class PrometheusMetrics(DependencyProvider):
     """
-    Dependency provider which measures RPC and HTTP endpoint latency.
+    Dependency provider which measures RPC, event handler and HTTP endpoint
+    latency.
 
     On service start, a few default metrics are declared. These are:
 

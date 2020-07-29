@@ -6,6 +6,12 @@ from nameko.rpc import rpc, RpcProxy
 from nameko.testing.services import once
 from nameko.web.handlers import http
 from nameko_prometheus import PrometheusMetrics
+from prometheus_client import Counter
+
+
+work_units = Counter(
+    "my_service_work_units_total", "Total number of work units", ["work_type"]
+)
 
 
 class MyService:
@@ -42,6 +48,7 @@ class MyService:
         time.sleep(delay)
         new_delay = random.uniform(0.5, 5)
         self.my_service.do_work.call_async(new_delay)
+        work_units.labels(work_type="hard").inc()
         if random.choice([True, False]):
             self.dispatcher("my_event", {"delay": 0.7 * new_delay})
 
@@ -53,3 +60,4 @@ class MyService:
         delay = payload["delay"]
         print(f"Handling event for {delay:.2f} seconds!")
         time.sleep(delay)
+        work_units.labels(work_type="easy").inc()

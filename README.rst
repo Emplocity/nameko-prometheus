@@ -61,6 +61,7 @@ Features
 
  - automatic collection of request latency metrics for RPC methods, event
    handlers and HTTP requests
+ - custom application metrics are also exposed automatically
  - HTTP endpoint exposing metrics to be scraped by Prometheus
 
 Installation
@@ -81,11 +82,25 @@ Usage
 
 .. include-section-usage-start
 
+Define your application metrics using types from prometheus_client_, such as
+``Counter``, ``Gauge``, ``Histogram``, etc. Add a
+``PrometheusMetrics`` dependency provider to your service class. Then add a
+HTTP entrypoint (usually routed under ``/metrics`` URL) that forwards the
+request to ``expose_metrics()`` method of the provider. That's it!
+
+.. _prometheus_client: https://github.com/prometheus/client_python
+
 .. code-block:: python
 
    from nameko.rpc import rpc
    from nameko.web.handlers import http
    from nameko_prometheus import PrometheusMetrics
+   from prometheus_client import Counter
+
+
+   work_units = Counter(
+       "my_service_work_units_total", "Total number of work units", ["work_type"]
+   )
 
 
    class MyService:
@@ -93,12 +108,15 @@ Usage
 
       @rpc
       def say_hello(self):
+         work_units.labels(work_type="hard").inc()
          return "Hello!"
 
       @http("GET", "/metrics")
       def serve_metrics(self, request):
          return self.metrics.expose_metrics(request)
 
+There are a few automatically defined metrics as well. See the documentation of
+``PrometheusMetrics`` for more.
 
 See also the full stack example in ``example/`` directory in this repo.
 
