@@ -9,14 +9,14 @@ from weakref import WeakKeyDictionary
 try:
     from functools import singledispatchmethod
 except ImportError:
-    from singledispatchmethod import singledispatchmethod
+    from singledispatchmethod import singledispatchmethod  # type: ignore
 
 from nameko.containers import WorkerContext
 from nameko.events import EventHandler
 from nameko.extensions import DependencyProvider, Entrypoint
 from nameko.rpc import Rpc
 from nameko.web.handlers import HttpRequestHandler
-from prometheus_client import Counter, Histogram, Gauge
+from prometheus_client import Counter, Gauge, Histogram
 from prometheus_client.exposition import choose_encoder
 from prometheus_client.registry import REGISTRY
 from werkzeug.wrappers import Request, Response
