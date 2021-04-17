@@ -2,12 +2,18 @@ import logging
 import os
 import platform
 import time
-from typing import MutableMapping
+from dataclasses import dataclass
+from typing import Any, MutableMapping, Optional, Tuple
 from weakref import WeakKeyDictionary
+
+try:
+    from functools import singledispatchmethod
+except ImportError:
+    from singledispatchmethod import singledispatchmethod
 
 from nameko.containers import WorkerContext
 from nameko.events import EventHandler
-from nameko.extensions import DependencyProvider
+from nameko.extensions import DependencyProvider, Entrypoint
 from nameko.rpc import Rpc
 from nameko.web.handlers import HttpRequestHandler
 from prometheus_client import Counter, Histogram, Gauge
@@ -51,6 +57,19 @@ class MetricsServer:
             message = "Failed to generate metrics"
             logger.exception(message)
             return Response(message, status=500)
+
+
+@dataclass(frozen=True)
+class WorkerSummary:
+    """
+    Represents the final result (or error) of a worker, including duration.
+
+    This simplifies method signatures for singledispatch overrides.
+    """
+
+    duration: float
+    result: Any
+    exc_info: Optional[Tuple]
 
 
 class PrometheusMetrics(DependencyProvider):
@@ -162,50 +181,69 @@ class PrometheusMetrics(DependencyProvider):
         """
         try:
             start = self.worker_starts.pop(worker_ctx)
-            entrypoint = worker_ctx.entrypoint
-            logger.debug(f"Got result from entrypoint: {entrypoint}")
-            duration = time.perf_counter() - start
-            if isinstance(entrypoint, HttpRequestHandler):
-                http_method = entrypoint.method
-                url = entrypoint.url
-                if exc_info:
-                    _, exc, _ = exc_info
-                    status_code = entrypoint.response_from_exception(exc).status_code
-                else:
-                    status_code = entrypoint.response_from_result(result).status_code
-                logger.debug(f"Tracing HTTP request: {http_method} {url} {status_code}")
-                self.http_request_total_counter.labels(
-                    http_method=http_method, endpoint=url, status_code=status_code
-                ).inc()
-                self.http_request_latency_histogram.labels(
-                    http_method=http_method, endpoint=url, status_code=status_code
-                ).observe(duration)
-            elif isinstance(entrypoint, Rpc):
-                method_name = entrypoint.method_name
-                logger.debug(f"Tracing RPC request: {method_name}")
-                self.rpc_request_total_counter.labels(method_name=method_name).inc()
-                self.rpc_request_latency_histogram.labels(
-                    method_name=method_name
-                ).observe(duration)
-            elif isinstance(entrypoint, EventHandler):
-                source_service = entrypoint.source_service
-                event_type = entrypoint.event_type
-                logger.debug(f"Tracing event handler: {source_service} {event_type}")
-                self.events_total_counter.labels(
-                    source_service=source_service, event_type=event_type
-                ).inc()
-                self.events_latency_histogram.labels(
-                    source_service=source_service, event_type=event_type
-                ).observe(duration)
-            else:
-                logger.warning(
-                    f"Entrypoint {entrypoint} is not traceable by nameko_prometheus"
-                )
         except KeyError:
-            logger.info("No worker_ctx in request start dictionary")
-        self._observe_state_metrics()
+            logger.warning("No worker_ctx in request start dictionary")
+            return
+        worker_summary = WorkerSummary(
+            duration=time.perf_counter() - start,
+            result=result,
+            exc_info=exc_info,
+        )
+        self.observe_entrypoint(worker_ctx.entrypoint, worker_summary)
+        self.observe_state_metrics()
 
-    def _observe_state_metrics(self) -> None:
+    @singledispatchmethod
+    def observe_entrypoint(
+        self, entrypoint: Entrypoint, worker_summary: WorkerSummary
+    ) -> None:
+        logger.warning(f"Entrypoint {entrypoint} is not traceable by nameko_prometheus")
+
+    @observe_entrypoint.register(Rpc)
+    def _observe_rpc(self, entrypoint: Rpc, worker_summary: WorkerSummary) -> None:
+        logger.info(f"Collect metrics from RPC entrypoint {entrypoint}")
+        method_name = entrypoint.method_name
+        self.rpc_request_total_counter.labels(method_name=method_name).inc()
+        self.rpc_request_latency_histogram.labels(method_name=method_name).observe(
+            worker_summary.duration
+        )
+
+    @observe_entrypoint.register(HttpRequestHandler)
+    def _observe_http(
+        self, entrypoint: HttpRequestHandler, worker_summary: WorkerSummary
+    ) -> None:
+        logger.info(f"Collect metrics from HTTP entrypoint {entrypoint}")
+        http_method = entrypoint.method
+        url = entrypoint.url
+        if worker_summary.exc_info:
+            _, exc, _ = worker_summary.exc_info
+            status_code = entrypoint.response_from_exception(exc).status_code
+        else:
+            status_code = entrypoint.response_from_result(
+                worker_summary.result
+            ).status_code
+        logger.debug(f"Tracing HTTP request: {http_method} {url} {status_code}")
+        self.http_request_total_counter.labels(
+            http_method=http_method, endpoint=url, status_code=status_code
+        ).inc()
+        self.http_request_latency_histogram.labels(
+            http_method=http_method, endpoint=url, status_code=status_code
+        ).observe(worker_summary.duration)
+
+    @observe_entrypoint.register(EventHandler)
+    def _observe_event_handler(
+        self, entrypoint: EventHandler, worker_summary: WorkerSummary
+    ) -> None:
+        logger.info(f"Collect metrics from event handler entrypoint {entrypoint}")
+        source_service = entrypoint.source_service
+        event_type = entrypoint.event_type
+        self.events_total_counter.labels(
+            source_service=source_service, event_type=event_type
+        ).inc()
+        self.events_latency_histogram.labels(
+            source_service=source_service, event_type=event_type
+        ).observe(worker_summary.duration)
+
+    def observe_state_metrics(self) -> None:
         self.service_info.labels(
             service_version=self.app_version, python_version=self.python_version
         ).set(1)
