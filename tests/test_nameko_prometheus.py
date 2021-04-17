@@ -64,6 +64,7 @@ def test_expose_default_metrics(config, container_factory, web_session):
     response = web_session.get("/metrics")
     # assert that default metrics are exposed in Prometheus text format
     assert f"TYPE {MyService.name}_rpc_requests_total counter" in response.text
+    assert f"TYPE {MyService.name}_service_max_workers gauge" in response.text
     assert (
         f'{MyService.name}_rpc_requests_total{{method_name="update_counter"}} 2.0'
         in response.text
