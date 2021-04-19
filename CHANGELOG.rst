@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.1.0 (2021-04-19)
+------------------
+
+* Added metrics related to service state: version, uptime, number of
+  running/max workers.
+
 1.0.0 (2020-07-29)
 ------------------
 
