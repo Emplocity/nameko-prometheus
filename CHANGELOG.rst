@@ -2,6 +2,11 @@
 Changelog
 =========
 
+1.1.1 (2021-04-28)
+------------------
+
+* Lowered log level for debug messages to actually DEBUG.
+
 1.1.0 (2021-04-19)
 ------------------
 
