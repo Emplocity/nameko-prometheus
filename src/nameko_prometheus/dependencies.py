@@ -200,7 +200,7 @@ class PrometheusMetrics(DependencyProvider):
 
     @observe_entrypoint.register(Rpc)
     def _observe_rpc(self, entrypoint: Rpc, worker_summary: WorkerSummary) -> None:
-        logger.info(f"Collect metrics from RPC entrypoint {entrypoint}")
+        logger.debug(f"Collect metrics from RPC entrypoint {entrypoint}")
         method_name = entrypoint.method_name
         self.rpc_request_total_counter.labels(method_name=method_name).inc()
         self.rpc_request_latency_histogram.labels(method_name=method_name).observe(
@@ -211,7 +211,7 @@ class PrometheusMetrics(DependencyProvider):
     def _observe_http(
         self, entrypoint: HttpRequestHandler, worker_summary: WorkerSummary
     ) -> None:
-        logger.info(f"Collect metrics from HTTP entrypoint {entrypoint}")
+        logger.debug(f"Collect metrics from HTTP entrypoint {entrypoint}")
         http_method = entrypoint.method
         url = entrypoint.url
         if worker_summary.exc_info:
@@ -233,7 +233,7 @@ class PrometheusMetrics(DependencyProvider):
     def _observe_event_handler(
         self, entrypoint: EventHandler, worker_summary: WorkerSummary
     ) -> None:
-        logger.info(f"Collect metrics from event handler entrypoint {entrypoint}")
+        logger.debug(f"Collect metrics from event handler entrypoint {entrypoint}")
         source_service = entrypoint.source_service
         event_type = entrypoint.event_type
         self.events_total_counter.labels(
