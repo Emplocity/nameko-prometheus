@@ -7,6 +7,12 @@ jobs:
       max-parallel: 2
       matrix:
         python-version: [3.6, 3.7, 3.8]
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
