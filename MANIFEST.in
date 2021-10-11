@@ -15,8 +15,9 @@ include CONTRIBUTING.rst
 include LICENSE
 include README.rst
 include pyproject.toml
-
-include mypy.ini tox.ini
+include mypy.ini
+include test_requirements.txt
+include tox.ini
 
 
 global-exclude *.py[cod] __pycache__/* *.so *.dylib
