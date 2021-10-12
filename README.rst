@@ -12,7 +12,7 @@ nameko-prometheus
     * - docs
       - |docs|
     * - tests
-      - | |travis|
+      - | |actions|
         |
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
@@ -21,9 +21,9 @@ nameko-prometheus
     :target: https://readthedocs.org/projects/nameko-prometheus
     :alt: Documentation Status
 
-.. |travis| image:: https://api.travis-ci.org/emplocity/nameko-prometheus.svg?branch=master
-    :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/emplocity/nameko-prometheus
+.. |actions| image:: https://github.com/Emplocity/nameko-prometheus/actions/workflows/build.yml/badge.svg
+    :alt: Github Actions Build Status
+    :target: https://github.com/Emplocity/nameko-prometheus/actions/
 
 .. |version| image:: https://img.shields.io/pypi/v/nameko-prometheus.svg
     :alt: PyPI Package latest release
