@@ -2,6 +2,11 @@
 Changelog
 =========
 
+1.2.0 (no release date yet)
+---------------------------
+
+* Added support for Python 3.9.
+
 1.1.1 (2021-04-28)
 ------------------
 
