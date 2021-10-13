@@ -41,9 +41,9 @@ nameko-prometheus
     :alt: Supported implementations
     :target: https://pypi.org/project/nameko-prometheus
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/emplocity/nameko-prometheus/v1.1.1.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/emplocity/nameko-prometheus/v1.2.0.svg
     :alt: Commits since latest release
-    :target: https://github.com/emplocity/nameko-prometheus/compare/v1.1.1...master
+    :target: https://github.com/emplocity/nameko-prometheus/compare/v1.2.0...master
 
 
 
