@@ -2,8 +2,14 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+* Drop support for Python 3.6 and 3.7.
+* Add support for Python 3.10.
+
 1.2.0 (2021-10-13)
----------------------------
+------------------
 
 * Added support for Python 3.9.
 * Moved CI infrastructure to Github Actions.
