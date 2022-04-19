@@ -2,11 +2,12 @@
 Changelog
 =========
 
-Unreleased
-----------
+1.3.0 (2022-04-19)
+------------------
 
 * Drop support for Python 3.6 and 3.7.
 * Add support for Python 3.10.
+* Add compatibility with prometheus-client >= 0.14.
 
 1.2.0 (2021-10-13)
 ------------------
