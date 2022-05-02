@@ -4,6 +4,12 @@ requires = [
     "wheel",
 ]
 
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+src_paths = "app/"
+known_first_party = "nameko_prometheus"
+
 [tool.mypy]
 python_version = "3.20"
 mypy_path = "src/"
