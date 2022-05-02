@@ -4,3 +4,20 @@ requires = [
     "wheel",
     "pytest-runner",
 ]
+
+[tool.mypy]
+python_version = "3.20"
+mypy_path = "src/"
+no_implicit_optional = true
+no_implicit_reexport = true
+strict_equality = true
+warn_redundant_casts = true
+
+[[tool.mypy.overrides]]
+module = [
+    "eventlet.*",
+    "nameko.*",
+    "prometheus_client.*",
+    "werkzeug.*",
+]
+ignore_missing_imports = true
