@@ -4,6 +4,9 @@ requires = [
     "wheel",
 ]
 
+[tool.check-manifest]
+ignore = ["*.swp"]
+
 [tool.isort]
 profile = "black"
 multi_line_output = 3
