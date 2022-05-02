@@ -47,5 +47,4 @@ setup(
         "nameko>=2,<3",
         "prometheus_client>=0.7,<1",
     ],
-    setup_requires=["pytest-runner"],
 )
