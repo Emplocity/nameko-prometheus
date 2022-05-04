@@ -15,6 +15,7 @@ setup(
     license="Apache-2.0",
     description="Prometheus metrics collector and exporter for nameko microservice framework",
     long_description=long_description,
+    long_description_content_type="text/x-rst",
     author="Emplocity",
     author_email="zbigniew.siciarz@emplocity.pl",
     url="https://github.com/emplocity/nameko-prometheus",
@@ -47,5 +48,4 @@ setup(
         "nameko>=2,<3",
         "prometheus_client>=0.7,<1",
     ],
-    setup_requires=["pytest-runner"],
 )

@@ -3,7 +3,7 @@ import os
 import platform
 import time
 from dataclasses import dataclass
-from typing import Any, MutableMapping, Optional, Tuple
+from typing import Any, MutableMapping, Optional, Tuple, Union
 from weakref import WeakKeyDictionary
 
 try:
@@ -23,7 +23,7 @@ try:
 except ImportError:
     from prometheus_client.exposition import choose_formatter as choose_encoder
 
-from prometheus_client.registry import REGISTRY
+from prometheus_client.registry import REGISTRY, CollectorRegistry, RestrictedRegistry
 from werkzeug.wrappers import Request, Response
 
 logger = logging.getLogger(__name__)
@@ -46,6 +46,7 @@ class MetricsServer:
         """
         Returns metrics as a HTTP response in Prometheus text format.
         """
+        registry: Union[CollectorRegistry, RestrictedRegistry]
         if "name" not in request.args:
             logger.debug(
                 "Registry name(s) not found in query string, using global registry"
@@ -56,7 +57,10 @@ class MetricsServer:
             registry = REGISTRY.restricted_registry(names)
         encoder, content_type = choose_encoder(request.headers["Accept"])
         try:
-            output = encoder(registry)
+            # note: registry may be an instance of RestrictedRegistry , but
+            # the only thing encoder does, is call registry.collect(); perhaps
+            # a Protocol-based type would be more suitable here?
+            output = encoder(registry)  # type: ignore
             return Response(output, status=200, content_type=content_type)
         except Exception:
             message = "Failed to generate metrics"
