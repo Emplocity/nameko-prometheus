@@ -7,13 +7,23 @@ from prometheus_client import REGISTRY, Counter
 
 from nameko_prometheus import PrometheusMetrics
 
+try:
+    from nameko import config
+
+    NAMEKO_V3 = True
+except ImportError:
+    NAMEKO_V3 = False
+
 
 @pytest.fixture
-def config(rabbit_config, web_config):
-    # merge nameko-provided fixtures in one config for container_factory
-    config = rabbit_config.copy()
-    config.update(web_config)
-    return config
+def container_config(rabbit_config, web_config):
+    if NAMEKO_V3:
+        return config
+    else:
+        # merge nameko-provided fixtures in one config for container_factory
+        cfg = rabbit_config.copy()
+        cfg.update(web_config)
+        return cfg
 
 
 @pytest.fixture(autouse=True)
@@ -55,8 +65,8 @@ class MyService:
         return f"handled: {payload}"
 
 
-def test_expose_default_metrics(config, container_factory, web_session):
-    container = container_factory(MyService, config)
+def test_expose_default_metrics(container_config, container_factory, web_session):
+    container = container_factory(MyService, container_config)
     container.start()
     with entrypoint_hook(container, "update_counter") as update_counter:
         update_counter()
@@ -71,8 +81,8 @@ def test_expose_default_metrics(config, container_factory, web_session):
     )
 
 
-def test_expose_custom_metrics(config, container_factory, web_session):
-    container = container_factory(MyService, config)
+def test_expose_custom_metrics(container_config, container_factory, web_session):
+    container = container_factory(MyService, container_config)
     container.start()
     with entrypoint_hook(container, "update_counter") as update_counter:
         update_counter()
@@ -81,8 +91,8 @@ def test_expose_custom_metrics(config, container_factory, web_session):
     assert "my_counter_total" in response.text
 
 
-def test_expose_event_handler_metrics(config, container_factory, web_session):
-    container = container_factory(MyService, config)
+def test_expose_event_handler_metrics(container_config, container_factory, web_session):
+    container = container_factory(MyService, container_config)
     container.start()
     with entrypoint_waiter(container, "handle_event"):
         with entrypoint_hook(container, "emit_event") as emit_event:
@@ -96,8 +106,10 @@ def test_expose_event_handler_metrics(config, container_factory, web_session):
     )
 
 
-def test_http_metrics_collected_on_exception(config, container_factory, web_session):
-    container = container_factory(MyService, config)
+def test_http_metrics_collected_on_exception(
+    container_config, container_factory, web_session
+):
+    container = container_factory(MyService, container_config)
     container.start()
     web_session.get("/error")
     response = web_session.get("/metrics")
@@ -107,10 +119,12 @@ def test_http_metrics_collected_on_exception(config, container_factory, web_sess
     )
 
 
-def test_override_default_metric_prefix(config, container_factory, web_session):
+def test_override_default_metric_prefix(
+    container_config, container_factory, web_session
+):
     prefix = "my_prefix"
-    config.update({"PROMETHEUS": {MyService.name: {"prefix": prefix}}})
-    container = container_factory(MyService, config)
+    container_config.update({"PROMETHEUS": {MyService.name: {"prefix": prefix}}})
+    container = container_factory(MyService, container_config)
     container.start()
     with entrypoint_hook(container, "update_counter") as update_counter:
         update_counter()

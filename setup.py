@@ -45,7 +45,7 @@ setup(
     },
     python_requires=">=3.8.*",
     install_requires=[
-        "nameko>=2,<3",
+        "nameko>=2,<4",
         "prometheus_client>=0.7,<1",
     ],
 )
