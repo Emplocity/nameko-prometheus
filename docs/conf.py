@@ -26,7 +26,7 @@ project = "nameko-prometheus"
 year = "2019"
 author = "Emplocity"
 copyright = "{0}, {1}".format(year, author)
-version = release = "1.3.0"
+version = release = "1.4.0"
 
 pygments_style = "trac"
 templates_path = ["."]
