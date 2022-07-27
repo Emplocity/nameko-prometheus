@@ -139,7 +139,7 @@ class PrometheusMetrics(DependencyProvider):
             ["http_method", "endpoint", "status_code"],
         )
         self.http_request_latency_histogram = Histogram(
-            f"{prefix}_http_request_latency_seconds",
+            f"{prefix}_http_request_latency_seconds_bucket",
             "HTTP request duration in seconds",
             ["http_method", "endpoint", "status_code"],
         )
@@ -149,7 +149,7 @@ class PrometheusMetrics(DependencyProvider):
             ["method_name"],
         )
         self.rpc_request_latency_histogram = Histogram(
-            f"{prefix}_rpc_request_latency_seconds",
+            f"{prefix}_rpc_request_latency_seconds_bucket",
             "RPC request duration in seconds",
             ["method_name"],
         )
@@ -159,7 +159,7 @@ class PrometheusMetrics(DependencyProvider):
             ["source_service", "event_type"],
         )
         self.events_latency_histogram = Histogram(
-            f"{prefix}_events_latency_seconds",
+            f"{prefix}_events_latency_seconds_bucket",
             "Event handler duration in seconds",
             ["source_service", "event_type"],
         )
