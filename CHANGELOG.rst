@@ -2,6 +2,11 @@
 Changelog
 =========
 
+1.5.0 (2022-08-23)
+------------------
+
+* Add ``reset_prometheus_registry`` helper function for use in tests.
+
 1.4.0 (2022-07-20)
 ------------------
 
