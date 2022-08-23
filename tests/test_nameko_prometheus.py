@@ -3,9 +3,10 @@ from nameko.events import EventDispatcher, event_handler
 from nameko.rpc import rpc
 from nameko.testing.services import entrypoint_hook, entrypoint_waiter
 from nameko.web.handlers import http
-from prometheus_client import REGISTRY, Counter
+from prometheus_client import Counter
 
 from nameko_prometheus import PrometheusMetrics
+from nameko_prometheus.utils import reset_prometheus_registry
 
 try:
     from nameko import config
@@ -27,13 +28,8 @@ def container_config(rabbit_config, web_config):
 
 
 @pytest.fixture(autouse=True)
-def reset_prometheus_registry():
-    collectors_to_unregister = []
-    for collector, names in REGISTRY._collector_to_names.items():
-        if any(name.startswith("my_service") for name in names):
-            collectors_to_unregister.append(collector)
-    for collector in collectors_to_unregister:
-        REGISTRY.unregister(collector)
+def reset_registry():
+    reset_prometheus_registry("my_service")
 
 
 my_counter = Counter("my_counter", "My counter")
