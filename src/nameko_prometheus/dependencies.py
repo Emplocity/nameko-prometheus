@@ -15,6 +15,7 @@ from nameko.containers import WorkerContext
 from nameko.events import EventHandler
 from nameko.extensions import DependencyProvider, Entrypoint
 from nameko.rpc import Rpc
+from nameko.timer import Timer
 from nameko.web.handlers import HttpRequestHandler
 from prometheus_client import Counter, Gauge, Histogram
 
@@ -163,6 +164,16 @@ class PrometheusMetrics(DependencyProvider):
             "Event handler duration in seconds",
             ["source_service", "event_type"],
         )
+        self.timer_request_total_counter = Counter(
+            f"{prefix}_timer_requests_total",
+            "Total number of timer_requests",
+            ["method_name"],
+        )
+        self.timer_request_latency_histogram = Histogram(
+            f"{prefix}_timer_request_latency_seconds",
+            "Timer request duration in seconds",
+            ["method_name"],
+        )
 
     def get_dependency(self, worker_ctx: WorkerContext) -> MetricsServer:
         """
@@ -251,6 +262,15 @@ class PrometheusMetrics(DependencyProvider):
         self.events_latency_histogram.labels(
             source_service=source_service, event_type=event_type
         ).observe(worker_summary.duration)
+
+    @observe_entrypoint.register(Timer)
+    def _observe_timer(self, entrypoint: Timer, worker_summary: WorkerSummary) -> None:
+        logger.debug(f"Collect metrics from Timer entrypoint {entrypoint}")
+        method_name = entrypoint.method_name
+        self.timer_request_total_counter.labels(method_name=method_name).inc()
+        self.timer_request_latency_histogram.labels(method_name=method_name).observe(
+            worker_summary.duration
+        )
 
     def observe_state_metrics(self) -> None:
         self.service_info.labels(
