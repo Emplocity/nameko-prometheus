@@ -16,6 +16,7 @@ from nameko.events import EventHandler
 from nameko.extensions import DependencyProvider, Entrypoint
 from nameko.rpc import Rpc
 from nameko.timer import Timer
+from nameko.messaging import Consumer
 from nameko.web.handlers import HttpRequestHandler
 from prometheus_client import Counter, Gauge, Histogram
 
@@ -174,6 +175,16 @@ class PrometheusMetrics(DependencyProvider):
             "Timer request duration in seconds",
             ["method_name"],
         )
+        self.consume_request_total_counter = Counter(
+            f"{prefix}_consume_requests_total",
+            "Total number of consume requests",
+            ["method_name"],
+        )
+        self.consume_request_latency_histogram = Histogram(
+            f"{prefix}_consume_request_latency_seconds",
+            "Consumer request duration in seconds",
+            ["method_name"],
+        )
 
     def get_dependency(self, worker_ctx: WorkerContext) -> MetricsServer:
         """
@@ -269,6 +280,15 @@ class PrometheusMetrics(DependencyProvider):
         method_name = entrypoint.method_name
         self.timer_request_total_counter.labels(method_name=method_name).inc()
         self.timer_request_latency_histogram.labels(method_name=method_name).observe(
+            worker_summary.duration
+        )
+
+    @observe_entrypoint.register(Consumer)
+    def _observe_consume(self, entrypoint: Consumer, worker_summary: WorkerSummary) -> None:
+        logger.debug(f"Collect metrics from Consume entrypoint {entrypoint}")
+        method_name = entrypoint.method_name
+        self.consume_request_total_counter.labels(method_name=method_name).inc()
+        self.consume_request_latency_histogram.labels(method_name=method_name).observe(
             worker_summary.duration
         )
 
