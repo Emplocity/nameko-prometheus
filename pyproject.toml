@@ -5,7 +5,7 @@ requires = [
 ]
 
 [tool.check-manifest]
-ignore = ["*.swp"]
+ignore = ["*.swp", ".mypy_cache"]
 
 [tool.isort]
 profile = "black"
