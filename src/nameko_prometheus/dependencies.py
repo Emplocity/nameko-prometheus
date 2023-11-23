@@ -14,9 +14,9 @@ except ImportError:
 from nameko.containers import WorkerContext
 from nameko.events import EventHandler
 from nameko.extensions import DependencyProvider, Entrypoint
+from nameko.messaging import Consumer
 from nameko.rpc import Rpc
 from nameko.timer import Timer
-from nameko.messaging import Consumer
 from nameko.web.handlers import HttpRequestHandler
 from prometheus_client import Counter, Gauge, Histogram
 from prometheus_client.exposition import choose_encoder
@@ -93,8 +93,8 @@ class PrometheusMetrics(DependencyProvider):
     - ``<prefix>_events_latency_seconds``
     - ``<prefix>_timer_total``
     - ``<prefix>_timer_latency_seconds``
-    - ``<prefix>_consume_total``
-    - ``<prefix>_consume_latency_seconds``
+    - ``<prefix>_consumer_total``
+    - ``<prefix>_consumer_latency_seconds``
 
     where ``prefix`` is either derived from ``name`` attribute of the service
     class, or :ref:`configured manually <configuration>`.
@@ -174,13 +174,13 @@ class PrometheusMetrics(DependencyProvider):
             "Timer request duration in seconds",
             ["method_name"],
         )
-        self.consume_request_total_counter = Counter(
-            f"{prefix}_consume_requests_total",
-            "Total number of consume requests",
+        self.consumer_request_total_counter = Counter(
+            f"{prefix}_consumer_requests_total",
+            "Total number of consumer requests",
             ["method_name"],
         )
-        self.consume_request_latency_histogram = Histogram(
-            f"{prefix}_consume_request_latency_seconds",
+        self.consumer_request_latency_histogram = Histogram(
+            f"{prefix}_consumer_request_latency_seconds",
             "Consumer request duration in seconds",
             ["method_name"],
         )
@@ -283,11 +283,13 @@ class PrometheusMetrics(DependencyProvider):
         )
 
     @observe_entrypoint.register(Consumer)
-    def _observe_consume(self, entrypoint: Consumer, worker_summary: WorkerSummary) -> None:
+    def _observe_consumer(
+        self, entrypoint: Consumer, worker_summary: WorkerSummary
+    ) -> None:
         logger.debug(f"Collect metrics from Consume entrypoint {entrypoint}")
         method_name = entrypoint.method_name
-        self.consume_request_total_counter.labels(method_name=method_name).inc()
-        self.consume_request_latency_histogram.labels(method_name=method_name).observe(
+        self.consumer_request_total_counter.labels(method_name=method_name).inc()
+        self.consumer_request_latency_histogram.labels(method_name=method_name).observe(
             worker_summary.duration
         )
 
