@@ -43,9 +43,9 @@ setup(
         "Changelog": "https://nameko-prometheus.readthedocs.io/en/latest/changelog.html",
         "Issue Tracker": "https://github.com/emplocity/nameko-prometheus/issues",
     },
-    python_requires=">=3.8.*",
+    python_requires=">=3.8",
     install_requires=[
         "nameko>=2,<4",
-        "prometheus_client>=0.7,<1",
+        "prometheus_client>=0.15,<1",
     ],
 )
