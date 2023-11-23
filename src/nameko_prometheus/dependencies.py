@@ -14,9 +14,9 @@ except ImportError:
 from nameko.containers import WorkerContext
 from nameko.events import EventHandler
 from nameko.extensions import DependencyProvider, Entrypoint
+from nameko.messaging import Consumer
 from nameko.rpc import Rpc
 from nameko.timer import Timer
-from nameko.messaging import Consumer
 from nameko.web.handlers import HttpRequestHandler
 from prometheus_client import Counter, Gauge, Histogram
 from prometheus_client.exposition import choose_encoder
