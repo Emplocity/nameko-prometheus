@@ -17,12 +17,7 @@ from nameko.extensions import DependencyProvider, Entrypoint
 from nameko.rpc import Rpc
 from nameko.web.handlers import HttpRequestHandler
 from prometheus_client import Counter, Gauge, Histogram
-
-try:
-    from prometheus_client.exposition import choose_encoder
-except ImportError:
-    from prometheus_client.exposition import choose_formatter as choose_encoder
-
+from prometheus_client.exposition import choose_encoder
 from prometheus_client.registry import REGISTRY, CollectorRegistry, RestrictedRegistry
 from werkzeug.wrappers import Request, Response
 
