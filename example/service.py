@@ -2,12 +2,12 @@ import random
 import time
 
 from nameko.events import EventDispatcher, event_handler
-from nameko.rpc import rpc, RpcProxy
+from nameko.rpc import RpcProxy, rpc
 from nameko.testing.services import once
 from nameko.web.handlers import http
-from nameko_prometheus import PrometheusMetrics
 from prometheus_client import Counter
 
+from nameko_prometheus import PrometheusMetrics
 
 work_units = Counter(
     "my_service_work_units_total", "Total number of work units", ["work_type"]
