@@ -2,6 +2,13 @@
 Changelog
 =========
 
+unreleased
+----------
+
+* Add support for ``Timer`` and ``Consumer`` entrypoints. Thanks to
+  Omer Faruk Mendi for the patch.
+* Require prometheus-client >= 0.15.
+
 1.5.0 (2022-08-23)
 ------------------
 
