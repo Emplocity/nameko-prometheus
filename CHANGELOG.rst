@@ -2,8 +2,8 @@
 Changelog
 =========
 
-unreleased
-----------
+1.6.0 (2023-11-27)
+------------------
 
 * Add support for ``Timer`` and ``Consumer`` entrypoints. Thanks to
   Omer Faruk Mendi for the patch.
